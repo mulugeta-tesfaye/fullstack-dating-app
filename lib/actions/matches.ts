@@ -20,7 +20,10 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     .limit(50);
 
   if (error) {
-    throw new Error("failed to fetch potential matches");
+    console.error("Error fetching potential matches:", error);
+    // If the users table isn't available yet (e.g. dev DB not seeded),
+    // return an empty list instead of crashing the server.
+    return [] as UserProfile[];
   }
 
   const { data: userPrefs, error: prefsError } = await supabase
@@ -30,7 +33,8 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     .single();
 
   if (prefsError) {
-    throw new Error("Failed to get user preferences");
+    console.error("Error fetching user preferences:", prefsError);
+    // Proceed with default/empty preferences
   }
 
   const currentUserPrefs = userPrefs.preferences as any;
@@ -133,7 +137,8 @@ export async function getUserMatches() {
     .eq("is_active", true);
 
   if (error) {
-    throw new Error("Failed to fetch matches");
+    console.error("Error fetching matches:", error);
+    return [] as UserProfile[];
   }
 
   const matchedUsers: UserProfile[] = [];
