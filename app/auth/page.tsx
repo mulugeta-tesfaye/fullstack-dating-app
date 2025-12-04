@@ -46,8 +46,16 @@ export default function AuthPage() {
         });
         if (error) throw error;
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err) {
+      function getErrorMessage(error: unknown) {
+        if (typeof error === "object" && error !== null) {
+          const maybe = error as { message?: unknown };
+          if (typeof maybe.message === "string") return maybe.message;
+        }
+        return String(error);
+      }
+
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

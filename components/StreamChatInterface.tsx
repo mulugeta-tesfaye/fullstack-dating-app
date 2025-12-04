@@ -137,10 +137,17 @@ export default function StreamChatInterface({
         chatChannel.on("message.new", (event: Event) => {
           if (event.message) {
             if (event.message.text?.includes(`📹 Video call invitation`)) {
-              const customData = event.message as any;
+              interface CustomCallMessage {
+                caller_id?: string;
+                call_id?: string;
+                caller_name?: string;
+                [key: string]: unknown;
+              }
+
+              const customData = event.message as unknown as CustomCallMessage;
 
               if (customData.caller_id !== userId) {
-                setIncomingCallId(customData.call_id);
+                setIncomingCallId(customData.call_id ?? "");
                 setCallerName(customData.caller_name || "Someone");
                 setIncomingCall(true);
               }

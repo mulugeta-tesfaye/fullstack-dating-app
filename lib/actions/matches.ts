@@ -37,7 +37,12 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     // Proceed with default/empty preferences
   }
 
-  const currentUserPrefs = userPrefs.preferences as any;
+  interface UserPreferences {
+    gender_preference?: string[];
+    [key: string]: unknown;
+  }
+
+  const currentUserPrefs: UserPreferences = (userPrefs?.preferences || {}) as UserPreferences;
   const genderPreference = currentUserPrefs?.gender_preference || [];
   const filteredMatches =
     potentialMatches
